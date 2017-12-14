@@ -237,11 +237,12 @@ class TwoLayerNet(object):
     # TODO: Implement this function; it should be VERY simple!                #
     ###########################################################################
     h = X.dot(self.params['W1']) + self.params['b1']
-    h[h<0] = 0
+    #h[h<0] = 0
+    h = np.maximum(0,h)
     scores = h.dot(self.params['W2']) + self.params['b2']
     scores_exp = np.exp(scores)
     scores_prob = scores_exp / np.sum(scores_exp, axis=1, keepdims=True)
-    y_pred = np.argmax(scores_prob)
+    y_pred = np.argmax(scores_prob,axis=1)
     ###########################################################################
     #                              END OF YOUR CODE                           #
     ###########################################################################
