@@ -170,7 +170,7 @@ class FullyConnectedNet(object):
     self.num_layers = 1 + len(hidden_dims)
     self.dtype = dtype
     self.params = {}
-
+    self.par = {}
     ############################################################################
     # TODO: Initialize the parameters of the network, storing all values in    #
     # the self.params dictionary. Store weights and biases for the first layer #
@@ -247,12 +247,12 @@ class FullyConnectedNet(object):
     # self.bn_params[1] to the forward pass for the second batch normalization #
     # layer, etc.                                                              #
     ############################################################################
-    self.params['h0'] = X
+    self.par['h0'] = X
     for i in range(1, self.num_layers):
-        h , cache = affine_relu_forward(self.params['h'+str(i-1)], self.params['W'+str(i)], self.params['b'+str(i)])
-        self.params['h'+str(i)] = h
-        self.params['cache'+str(i)] = cache
-    scores, cache = affine_forward(self.params['h'+str(self.num_layers-1)], self.params['W'+str(self.num_layers)], self.params["b"+str(self.num_layers)])
+        h , cache = affine_relu_forward(self.par['h'+str(i-1)], self.params['W'+str(i)], self.params['b'+str(i)])
+        self.par['h'+str(i)] = h
+        self.par['cache'+str(i)] = cache
+    scores, cache = affine_forward(self.par['h'+str(self.num_layers-1)], self.params['W'+str(self.num_layers)], self.params["b"+str(self.num_layers)])
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -288,11 +288,11 @@ class FullyConnectedNet(object):
     db += self.reg * self.params['b'+str(self.num_layers)]
     grads['W'+str(self.num_layers)] = dW
     grads['b'+str(self.num_layers)] = db
-    self.params['dh'+str(self.num_layers-1)] = dh
+    self.par['dh'+str(self.num_layers-1)] = dh
 
     for i in range(self.num_layers-1, 0, -1):
-        dh, dW, db = affine_relu_backward(self.params['dh'+str(i)], self.params['cache'+str(i)])
-        self.params['dh'+str(i-1)] = dh
+        dh, dW, db = affine_relu_backward(self.par['dh'+str(i)], self.par['cache'+str(i)])
+        self.par['dh'+str(i-1)] = dh
         dW += self.reg * self.params['W'+str(i)]
         db += self.reg * self.params['b'+str(i)]
         grads['W'+str(i)] = dW
