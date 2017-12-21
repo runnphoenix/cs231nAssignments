@@ -247,12 +247,16 @@ class FullyConnectedNet(object):
     # self.bn_params[1] to the forward pass for the second batch normalization #
     # layer, etc.                                                              #
     ############################################################################
-    self.par['h0'] = X
+    self.par['h_dr0'] = X
     for i in range(1, self.num_layers):
-        h , cache = affine_relu_forward(self.par['h'+str(i-1)], self.params['W'+str(i)], self.params['b'+str(i)])
+        h, cache = affine_relu_forward(self.par['h_dr'+str(i-1)], self.params['W'+str(i)], self.params['b'+str(i)])
+        h_dr, cache_dr = dropout_forward(h, self.dropout_param)
         self.par['h'+str(i)] = h
         self.par['cache'+str(i)] = cache
-    scores, cache = affine_forward(self.par['h'+str(self.num_layers-1)], self.params['W'+str(self.num_layers)], self.params["b"+str(self.num_layers)])
+        self.par['h_dr'+str(i)] = h_dr
+        self.par['cache_dr'+str(i)] = cache_dr
+
+    scores, cache = affine_forward(self.par['h_dr'+str(self.num_layers-1)], self.params['W'+str(self.num_layers)], self.params["b"+str(self.num_layers)])
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
@@ -288,11 +292,13 @@ class FullyConnectedNet(object):
     db += self.reg * self.params['b'+str(self.num_layers)]
     grads['W'+str(self.num_layers)] = dW
     grads['b'+str(self.num_layers)] = db
-    self.par['dh'+str(self.num_layers-1)] = dh
+    self.par['dh_dr'+str(self.num_layers-1)] = dh
 
     for i in range(self.num_layers-1, 0, -1):
+        dh = dropout_backward(self.par['dh_dr'+str(i)], self.par['cache_dr'+str(i)])
+        self.par['dh'+str(i)] = dh
         dh, dW, db = affine_relu_backward(self.par['dh'+str(i)], self.par['cache'+str(i)])
-        self.par['dh'+str(i-1)] = dh
+        self.par['dh_dr'+str(i-1)] = dh
         dW += self.reg * self.params['W'+str(i)]
         db += self.reg * self.params['b'+str(i)]
         grads['W'+str(i)] = dW
