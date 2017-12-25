@@ -384,11 +384,13 @@ def conv_forward_naive(x, w, b, conv_param):
   # filters
   # one filter
   # one conv
-  Ho = 1+(H+2*pad-HH)/stride
-  Wo = 1+(W+2*pad-WW)/stride
-  for j in range(Wo):
-    for i in range(Ho):
-      x[0,C,i*stride:i*stride+HH,j*stride:j*stride+WW]
+  for n in range(N):
+    for f in range(F):
+      Ho = 1 + (H+2*pad-HH) / stride
+      Wo = 1 + (W+2*pad-WW) / stride
+      for j in range(Wo):
+        for i in range(Ho):
+          out[n,f,i,j] = np.sum(x[n, C, i*stride:i*stride+HH, j*stride:j*stride+WW] * w[f,C,HH,WW])
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
