@@ -415,11 +415,30 @@ def conv_backward_naive(dout, cache):
   - dw: Gradient with respect to w
   - db: Gradient with respect to b
   """
-  dx, dw, db = None, None, None
+  dx, db = None, None
+  
   #############################################################################
   # TODO: Implement the convolutional backward pass.                          #
   #############################################################################
-  pass
+  x,w,b,conv_param = cache
+  pad, stride = conv_param['pad'], conv_param['stride']
+  N,F,Ho,Wo = dout.shape
+  N,C,H,W = x.shape
+  F,C,HH,WW = w.shape
+  dx_pad = np.zeros((N,C,H+2*pad,W+2*pad))
+  dw = np.zeros((F,C,HH,WW))
+
+  for n in range(N):
+    for f in range(F):
+      for j in range(Ho):
+        for i in range(Wo):
+          for hr in range(j*stride, j*stride+HH):
+            for wr in range(i*stride, i*stride+WW):
+              print hr,wr
+              dx_pad[n,:,hr,wr] += w[f,:,hr,wr]*dout[n,f,j,i]
+	      dw[f,:,hr,wr] += dx_pad[n,:,hr,wr]*dout[n,f,j,i]
+    db[f] = np.sum(dout[n,f,:,:])
+    dx = dx_pad[:,:,pad:-pad,pad:-pad]
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
