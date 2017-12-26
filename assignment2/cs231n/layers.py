@@ -372,25 +372,29 @@ def conv_forward_naive(x, w, b, conv_param):
     W' = 1 + (W + 2 * pad - WW) / stride
   - cache: (x, w, b, conv_param)
   """
-  out = None
-  out = np.zeros((N,F,Ho,Wo)
+  N,C,H,W = x.shape
+  F,C,HH,WW = w.shape
+  pad = conv_param['pad']
+  stride = conv_param['stride']
+
+  Ho = 1 + (H+2*pad-HH) / stride
+  Wo = 1 + (W+2*pad-WW) / stride
+
+  out = np.zeros((N,F,Ho,Wo))
   #############################################################################
   # TODO: Implement the convolutional forward pass.                           #
   # Hint: you can use the function np.pad for padding.                        #
   #############################################################################
-  pad = conv_param['pad']
-  x_pad = np.pad(x,(pad,pad),constant,constant_values=0)
+  x_pad = np.pad(x,((0,0),(0,0),(pad,pad),(pad,pad)),'constant',constant_values=0)
   # N
   # filters
   # one filter
   # one conv
   for n in range(N):
     for f in range(F):
-      Ho = 1 + (H+2*pad-HH) / stride
-      Wo = 1 + (W+2*pad-WW) / stride
-      for j in range(Wo):
-        for i in range(Ho):
-          out[n,f,i,j] = np.sum(x[n, C, i*stride:i*stride+HH, j*stride:j*stride+WW] * w[f,C,HH,WW])
+      for j in range(Ho):
+        for i in range(Wo):
+          out[n,f,j,i] = np.sum(x_pad[n, :, j*stride:j*stride+HH, i*stride:i*stride+WW] * w[f,:,:,:])+b[f]
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
