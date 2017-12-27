@@ -49,7 +49,7 @@ class ThreeLayerConvNet(object):
     ############################################################################
     W1 = np.random.randn(num_filters, input_dim[0], filter_size, filter_size) * weight_scale
     b1 = np.zeros(num_filters)
-    W2 = np.random.randn(num_filters, hidden_dim) * weight_scale
+    W2 = np.random.randn(num_filters*input_dim[1]/2*input_dim[2]/2, hidden_dim) * weight_scale
     b2 = np.zeros(hidden_dim)
     W3 = np.random.randn(hidden_dim, num_classes) * weight_scale
     b3 = np.zeros(num_classes)
@@ -92,7 +92,6 @@ class ThreeLayerConvNet(object):
     # variable.                                                                #
     ############################################################################
     l1, cache1 = conv_relu_pool_forward(X,W1,b1,conv_param,pool_param)
-    print l1.shape
     l2, cache2 = affine_relu_forward(l1, W2, b2)
     l3, cache3 = affine_forward(l2, W3, b3)
     scores = l3
