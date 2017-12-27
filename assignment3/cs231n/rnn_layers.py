@@ -69,7 +69,7 @@ def rnn_step_backward(dnext_h, cache):
   dx = dtanh.dot(Wx.T)
   dprev_h = dtanh.dot(Wh.T)
   dWh = prev_h.T.dot(dtanh)
-  db = dtanh
+  db = np.sum(dtanh, axis=0)
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
