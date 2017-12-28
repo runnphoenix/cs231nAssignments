@@ -172,13 +172,19 @@ def word_embedding_forward(x, W):
   - out: Array of shape (N, T, D) giving word vectors for all input words.
   - cache: Values needed for the backward pass
   """
-  out, cache = None, None
+  cache = None
+  N,T = x.shape
+  D = W.shape[1]
+  out = np.zeros((N,T,D))
   ##############################################################################
   # TODO: Implement the forward pass for word embeddings.                      #
   #                                                                            #
   # HINT: This should be very simple.                                          #
   ##############################################################################
-  pass
+  for n in range(N):
+    for t in range(T):
+      out[n,t,:] = W[x[n,t],:]
+  cache = (x, W)
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
