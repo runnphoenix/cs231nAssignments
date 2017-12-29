@@ -198,7 +198,6 @@ class CaptioningRNN(object):
     W_embed = self.params['W_embed']
     Wx, Wh, b = self.params['Wx'], self.params['Wh'], self.params['b']
     W_vocab, b_vocab = self.params['W_vocab'], self.params['b_vocab']
-
     ###########################################################################
     # TODO: Implement test-time sampling for the model. You will need to      #
     # initialize the hidden state of the RNN by applying the learned affine   #
@@ -220,7 +219,20 @@ class CaptioningRNN(object):
     # functions; you'll need to call rnn_step_forward or lstm_step_forward in #
     # a loop.                                                                 #
     ###########################################################################
-    pass
+    h0, cache0 = affine_forward(features, W_proj, b_proj)
+    in_words = self._start * np.ones((N,), dtype=np.int32)
+    h = h0
+    for t in range(max_length):
+      # (1)
+      embedding = W_embed[in_words]
+      # (2)
+      h, cache_h = rnn_step_forward(embedding, h, Wx, Wh, b)
+      # (3)
+      out, cache_vocab = affine_forward(h, W_vocab, b_vocab)
+      # (4)
+      words = np.argmax(out,axis=1)
+      captions[:,t] = words
+      in_words = words
     ############################################################################
     #                             END OF YOUR CODE                             #
     ############################################################################
