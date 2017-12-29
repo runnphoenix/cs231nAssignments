@@ -206,13 +206,18 @@ def word_embedding_backward(dout, cache):
   Returns:
   - dW: Gradient of word embedding matrix, of shape (V, D).
   """
-  dW = None
+  N, T, D = dout.shape
+  x, W = cache
+  V = W.shape[0]
+  dW = np.zeros((V, D))
   ##############################################################################
   # TODO: Implement the backward pass for word embeddings.                     #
   #                                                                            #
   # HINT: Look up the function np.add.at                                       #
   ##############################################################################
-  pass
+  for n in range(N):
+    for t in range(T):
+      np.add.at(dW, x[n,t], dout[n,t,:])
   ##############################################################################
   #                               END OF YOUR CODE                             #
   ##############################################################################
